@@ -15,12 +15,12 @@ from numpy.fft import rfft
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
-CHUNK = 2048
+CHUNK = 512
 wait_time = 10
  
 audio = pyaudio.PyAudio()
 counter = 0
-cthreshold = 1
+cthreshold = 2
 previous_maxf = 0
 previous_char = '\n'
 

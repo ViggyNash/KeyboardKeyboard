@@ -211,7 +211,7 @@ def log(done, callback, x11, display, sleep_interval=.005):
         changed, modifiers, keys = fetch_keys(x11, display)
         callback(time(), modifiers, keys)
 
-
+char_q = []
 #Begin new stuff
 def make_callbacks(conf_path):
     """
@@ -220,12 +220,12 @@ def make_callbacks(conf_path):
     with open(conf_path) as fil:
         chars = fil.read().strip()
 
-    char_q = []
+    global char_q
     q_step = (MAX_FREQ - MIN_FREQ) / len(chars)
 
     def key_callback(t, modifiers, keys):
         if keys != None and keys in chars or keys == '`':
-            char_q.append(keys)
+            char_q = keys
 
     def get_qc():
         return char_q, chars
@@ -272,7 +272,7 @@ if __name__ == "__main__":
                 stream.write(chr(0)*CHUNK)
         else:
             stream.write(chr(0)*CHUNK)
-
+        print q
     stream.close()
     audio.terminate()
     thr.join()
