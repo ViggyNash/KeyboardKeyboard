@@ -36,8 +36,8 @@ import pyaudio
 assert("linux" in sys.platform)
 
 #Some configuration
-MIN_FREQ = 23
-MAX_FREQ = 662
+MIN_FREQ = 150
+MAX_FREQ = 775
 RATE = 44100
 CHUNK = 1024 * 8 #to be expanded
 CHANNELS = 1

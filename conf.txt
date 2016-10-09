@@ -1,5 +1,1 @@
-<<<<<<< HEAD
  abcdefghijklmnopqrstuvwxyz
-=======
-abcdefghijklmnopqrstuvwxyz
->>>>>>> 62fff811ad02bfb2ad7252243de27d8bc6faf7fa

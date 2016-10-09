@@ -20,7 +20,7 @@ wait_time = 10
  
 audio = pyaudio.PyAudio()
 counter = 0
-cthreshold = 3
+cthreshold = 1
 previous_maxf = 0
 previous_char = '\n'
 
