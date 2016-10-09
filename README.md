@@ -13,3 +13,4 @@ Why would you want to? Who knows, but you can.
 - Adding it as a background process to all iLab machines at Rutgers
   - Create a bashrc script that automatically adds the process
 - Port to Windows
+- Attach to a virus and terrify the world
