@@ -7,6 +7,7 @@ import sys
 import threading
 
 from math import log
+import Queue
 
 import numpy as np
 from numpy.fft import rfft
@@ -19,21 +20,24 @@ CHUNK = 512
 wait_time = 10
  
 audio = pyaudio.PyAudio()
-counter = 0
+last = [0,0,0,0,0]
 cthreshold = 2
 previous_maxf = 0
 previous_char = '\n'
 
 def process_input(maxf, char):
-    global counter, previous_maxf, previous_char
-    if maxf == previous_maxf:
-        counter = counter + 1
-    else:
-        counter = 0
-    if counter == cthreshold and char != previous_char:
-        sys.stdout.write(char)
-        sys.stdout.flush()
-    previous_maxf = maxf
+    global last, previous_maxf, previous_char
+    last.pop()
+    last.insert(maxf, 0)
+    print last
+    for obj in last:
+        count = last.count(obj)
+        if count >= cthreshold:
+            if char != previous_char:
+                previous_char = char
+                sys.stdout.write(char)
+                sys.stdout.flush()
+                break
 
  
 wait_time = 2
@@ -64,9 +68,9 @@ def configure_reader(config_path):
 
 
         if (max_f >= MIN_FREQ and max_p > threshold):
-            #print str(max_f) + "  " + str(p[np.argmax(p)])
+            print str(max_f) + "  " + str(p[np.argmax(p)])
             char_ind =  int(max((MAX_FREQ - max_f) / q_step, 0.1))
-            #print str(char_ind) + " " + str(len(chars))
+            print str(char_ind) + " " + str(len(chars))
             process_input(max_f, chars[char_ind])
         return (in_data, pyaudio.paContinue)
     return callback
