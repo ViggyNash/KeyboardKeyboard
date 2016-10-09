@@ -1,9 +1,14 @@
 # KeyboardKeyboard
 
-Ever wanted to use a keyboard as a keyboard? Like a piano keyboard as a computer keyboard, I mean. Well now you can!
+Ever wanted to use a keyboard as a keyboard? Well now you can!
+Ever wanted to play the keyboard with a keybard? You can do that too!
+
+Now you can play your favorite code and code your favorite tunes!
 
 Why would you want to? Who knows, but you can.
 
 #todo:
 
-Implement using a keyboard as a keyboard. Like a computer keyboard as a piano keyboard.
+- Making it work 100% instead of 90%.
+- Adding it as a background process to all iLab machines at Rutgers
+- Port to Windows
