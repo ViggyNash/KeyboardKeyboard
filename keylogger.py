@@ -222,7 +222,6 @@ def make_callbacks(conf_path):
         if keys != None and keys in chars or keys == '`':
             char_q.append(keys)
 
-<<<<<<< HEAD
     def wrap_audio(aud):    
         def aud_callback(in_data, frame_count, time_info, status):
             if len(char_q) == 0:
@@ -233,7 +232,6 @@ def make_callbacks(conf_path):
             print "After if"
             idx = chars.find(char_q[0])
             wave = ''
-=======
     def aud_callback(in_data, frame_count, time_info, status):
         print "cbk"
         if len(char_q) == 0:
@@ -245,7 +243,6 @@ def make_callbacks(conf_path):
             return (''.join(chr(128) for i in xrange(frame_count)), pyaudio.paComplete)
 
         print "elif passed"
->>>>>>> 62fff811ad02bfb2ad7252243de27d8bc6faf7fa
 
         idx = chars.find(char_q[0])
         wave = ''
