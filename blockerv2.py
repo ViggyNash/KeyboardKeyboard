@@ -218,7 +218,7 @@ def make_callbacks(conf_path):
     Makes the callback functions that store the program state and handle the key logging.
     """
     with open(conf_path) as fil:
-        chars = fil.read().strip()
+        chars = fil.read().rstrip()
 
     q_step = (MAX_FREQ - MIN_FREQ) / len(chars)
 
