@@ -222,58 +222,46 @@ def make_callbacks(conf_path):
         if keys != None and keys in chars or keys == '`':
             char_q.append(keys)
 
-    def aud_callback(in_data, frame_count, time_info, status):
-        print "cbk"
-        if len(char_q) == 0:
-            print "l 0"
-            return (''.join(chr(128) for i in xrange(frame_count)), pyaudio.paContinue)
-        elif char_q[len(char_q) - 1] == '`':
-            print "term"
-            close_cbk()
-            return (''.join(chr(128) for i in xrange(frame_count)), pyaudio.paComplete)
-
-        print "elif passed"
-
-        idx = chars.find(char_q[0])
-        wave = ''
-
-        char_q.pop(0)
-        if idx < 0:
-            return (''.join(chr(128) for i in xrange(frame_count)), pyaudio.paContinue)
-
-        freq = q_step * (len(chars) - idx)
-        print "tone gen: " + freq
-
-        for x in xrange(frame_count):
-            wave = wave + chr(int(sin(x/((RATE/freq) / pi)) * 127 + 128))
-        print "rwave"
-        return (wave, pyaudio.paContinue)
+    def get_qc():
+        return char_q, chars
 
     def keys_pred():
         return len(char_q) > 0 and char_q[len(char_q) - 1] == '`'
 
-    return key_callback, keys_pred, aud_callback
+    return key_callback, keys_pred, get_qc
 
 
 if __name__ == "__main__":
     x11 = ct.cdll.LoadLibrary(find_library("X11"))
     display = x11.XOpenDisplay(None)
 
-    key_han, key_pred, aud_han = make_callbacks("conf.txt")
+    key_han, key_pred, qc = make_callbacks("conf.txt")
 
     audio = pyaudio.PyAudio()
     stream = audio.open(format=FORMAT, channels=CHANNELS,
                 rate=RATE, output=True,
-                frames_per_buffer=CHUNK,
-                stream_callback=aud_han)
+                frames_per_buffer=CHUNK)
 
     stream.start_stream()
 
     thr = threading.Thread(target = log, args = (key_pred, key_han, x11, display))
     thr.setDaemon(True)
     thr.start()
+    q_step = (MAX_FREQ - MIN_FREQ) / len(qc()[1])
 
-    while stream.is_active():
+    while not key_pred():
+        q, c = qc()
+        if len(q) > 0 and q[len(q) - 1] != '`':
+            idx = c.find(q[len(q) - 1])
+            q.pop(0)
+            if idx >= 0:
+                wave = ''
+
+                freq = q_step * (len(c) - idx)
+
+                for x in xrange(CHUNK):
+                    wave = wave + chr(int(sin(x/((RATE/freq) / pi)) * 127 + 128))
+                stream.write(wave)
         sleep(0.01)
 
     stream.close()
