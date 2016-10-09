@@ -35,11 +35,11 @@ import pyaudio
 # linux only!
 assert("linux" in sys.platform)
 
-
+#Some configuration
 MIN_FREQ = 23
 MAX_FREQ = 662
 RATE = 44100
-CHUNK = 1024
+CHUNK = 1024 * 8 #to be expanded
 CHANNELS = 1
 FORMAT = pyaudio.paInt16
 
@@ -209,9 +209,14 @@ def log(done, callback, x11, display, sleep_interval=.005):
     while not done():
         sleep(sleep_interval)
         changed, modifiers, keys = fetch_keys(x11, display)
-        if changed: callback(time(), modifiers, keys)
+        callback(time(), modifiers, keys)
 
+
+#Begin new stuff
 def make_callbacks(conf_path):
+    """
+    Makes the callback functions that store the program state and handle the key logging.
+    """
     with open(conf_path) as fil:
         chars = fil.read().strip()
 
@@ -262,7 +267,11 @@ if __name__ == "__main__":
                 for x in xrange(CHUNK):
                     wave = wave + chr(int(sin(x/((RATE/freq) / pi)) * 127 + 128))
                 stream.write(wave)
-        sleep(0.01)
+            else:
+                stream.write(chr(0)*CHUNK)
+        else:
+            stream.write(chr(0)*CHUNK)
+#        sleep(1.0 / RATE)
 
     stream.close()
     audio.terminate()
