@@ -228,7 +228,7 @@ def make_callbacks(conf_path):
             elif char_q[len(char_q) - 1] == '`':
                 aud.terminate()
                 return (''.join(chr(128) for i in xrange(frame_count)), pyaudio.paComplete)
-
+            print "After if"
             idx = chars.find(char_q[0])
             wave = ''
 

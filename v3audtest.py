@@ -15,42 +15,59 @@ from numpy.fft import rfft
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
-CHUNK = 1024
+CHUNK = 2048
 wait_time = 10
  
 audio = pyaudio.PyAudio()
+counter = 0
+cthreshold = 3
+previous_maxf = 0
+previous_char = '\n'
 
-buffer = 0
+def process_input(maxf, char):
+    global counter, previous_maxf, previous_char
+    if maxf == previous_maxf:
+        counter = counter + 1
+    else:
+        counter = 0
+    if counter == cthreshold and char != previous_char:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+    previous_maxf = maxf
 
-def process_input(maxf, maxp):
-	print "blah"
  
 wait_time = 2
-MAX_FREQ = log(662 / 23, 2)
-MIN_FREQ = log(23 / 23, 2)
-threshold = 100
+MAX_FREQ = 775
+MIN_FREQ = 150
+threshold = 115
 
 audio = pyaudio.PyAudio()
 
 # define callback (2)
 def configure_reader(config_path):
     with open(config_path) as fi:
-        chars = fi.read().strip()
+        chars = fi.read().rstrip()
 
     print str(MAX_FREQ) + " " + str(MIN_FREQ)
     q_step = (MAX_FREQ - MIN_FREQ) / len(chars)
+    global MAX_FREQ
+    MAX_FREQ = MAX_FREQ - q_step
     print q_step
     def callback(in_data, frame_count, time_info, status):
         #print np.fromstring(in_data, dtype=np.int16)
         npdata = np.fromstring(in_data, dtype = np.int16)
         p = 20*np.log10(np.abs(rfft(npdata)))
         f = np.linspace(0, RATE/2.0, len(p))
-        max_f = log((f[np.argmax(p)] + .1) / 23, 2)
+
+        max_f = (f[np.argmax(p)] + .1)
         max_p = p[np.argmax(p)]
-        if (max_f < MAX_FREQ and max_f >= MIN_FREQ and max_p > threshold):
-            print str(max_f) + "  " + str(p[np.argmax(p)])
+
+
+        if (max_f >= MIN_FREQ and max_p > threshold):
+            #print str(max_f) + "  " + str(p[np.argmax(p)])
             char_ind =  int(max((MAX_FREQ - max_f) / q_step, 0.1))
-            print char_ind
+            #print str(char_ind) + " " + str(len(chars))
+            process_input(max_f, chars[char_ind])
         return (in_data, pyaudio.paContinue)
     return callback
 
