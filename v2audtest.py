@@ -13,12 +13,15 @@ from numpy.fft import rfft
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
-CHUNK = 4096
-RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "file.wav"
-wait_time = 2
+CHUNK = 1024
+wait_time = 10
  
 audio = pyaudio.PyAudio()
+
+buffer = 0
+
+def process_input(maxf, maxp):
+	print "blah"
  
 # define callback (2)
 def callback(in_data, frame_count, time_info, status):
@@ -40,13 +43,15 @@ stream = audio.open(format=FORMAT, channels=CHANNELS,
 stream.start_stream()
 
 # wait for stream to finish (5)
-print "Waiting " + str(wait_time) + " seconds for input"
-time.sleep(wait_time)
+#print "Waiting " + str(wait_time) + " seconds for input"
+#time.sleep(wait_time)
+
+raw_input("Press enter to quit...\n")
+
 print 'Stopping stream...'
 # stop stream (6)
 #stream.stop_stream()
 stream.close()
-print 'Here!!'
 # close PyAudio (7)
 audio.terminate()
 print "Quitting now."
